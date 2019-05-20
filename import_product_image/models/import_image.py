@@ -22,7 +22,7 @@
 import csv
 from urllib.request import urlopen
 import base64
-import StringIO
+from io import StringIO
 import sys
 from odoo import models, fields, api
 from odoo.exceptions import Warning
