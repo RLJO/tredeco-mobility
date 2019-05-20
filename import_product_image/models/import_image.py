@@ -20,7 +20,7 @@
 #
 ###################################################################################
 import csv
-import urllib2
+from urllib.request import urlopen
 import base64
 import StringIO
 import sys
