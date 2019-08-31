@@ -8,14 +8,13 @@ class ApplyAccountTaxLine(models.Model):
 
     sale_tax_ids = fields.Many2many('account.tax', string='Taxes', required=True, domain=[('type_tax_use', '=', 'sale')])
     purchase_tax_ids = fields.Many2many('account.tax', string='Taxes',required=True, domain=[('type_tax_use', '=', 'purchase')])
-    customer_invoice_tax_ids = fields.Many2many('account.tax',string="Taxes" ,required=True, domain=[('type_tax_use', '!=', 'sale')])
-    vendor_bill_tax_ids = fields.Many2many('account.tax',string="Taxes" ,required=True, domain=[('type_tax_use', '!=', 'purchase')])
+    customer_invoice_tax_ids = fields.Many2many('account.tax',string="Taxes" ,required=True, domain=[('type_tax_use', '=', 'sale')])
+    vendor_bill_tax_ids = fields.Many2many('account.tax',string="Taxes" ,required=True, domain=[('type_tax_use', '=', 'purchase')])
     
     @api.multi
     def apply_tax_on_all_lines(self):
         active_id = self.env.context.get('active_id', False)
         active_model = self.env.context.get('active_model', False)
-        # import pdb; pdb.set_trace()
         if active_model == 'sale.order':
             saleorder_obj = self.env['sale.order'].browse(active_id)
             for line in saleorder_obj.order_line:

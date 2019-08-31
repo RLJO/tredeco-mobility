@@ -25,7 +25,7 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//form/header/button[@name='btn_split_rfq']" position="after">
+            <xpath expr="//form/header" position="inside">
               <button name="action_apply_taxes_on_lines" string="Apply Taxes" type="object"/>
             </xpath>
         </field>
