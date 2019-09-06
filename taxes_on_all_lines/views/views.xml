@@ -1,0 +1,134 @@
+<odoo>
+  <data>
+    <!-- <record id="action_apply_taxes_on_lines" model="ir.actions.act_window">
+        <field name="name">Apply Taxes</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="apply_taxes_all_lines_form"/>
+    </record> -->
+
+
+    <record id="view_order_form_taxes_on_lines" model="ir.ui.view">
+        <field name="name">sale.order.form.taxes.lines</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/header/button[@name='action_unlock']" position="after">
+              <button name="action_apply_taxes_on_lines" string="Apply Taxes" type="object"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_form_taxes_on_lines_purchase_order" model="ir.ui.view">
+        <field name="name">purchase.order.form.taxes.lines</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/header" position="inside">
+              <button name="action_apply_taxes_on_lines" string="Apply Taxes" type="object"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_form_taxes_on_lines_customer_invoice" model="ir.ui.view">
+        <field name="name">customer.invoice.form.taxes.lines</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/header" position="inside">
+              <button name="action_apply_taxes_on_lines_customer_invoice" string="Apply Taxes" type="object"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_form_taxes_on_lines_vendor_bills" model="ir.ui.view">
+        <field name="name">vendor.bills.form.taxes.lines</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_supplier_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/header" position="inside">
+              <button name="action_apply_taxes_on_lines_vendor_bill" string="Apply Taxes" type="object"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="apply_taxes_all_lines_form">
+      <field name="name">apply.tax.lines.form</field>
+      <field name="model">apply.account.tax.line</field>
+      <field name="arch" type="xml">
+        <form string="description">
+          <sheet>
+            <group>
+              <group>
+                <field name="sale_tax_ids" readonly="0" widget="many2many_tags"/>
+              </group>
+            </group>
+          </sheet>
+          <footer>
+            <button string="Apply" class="btn btn-primary" type="object" name="apply_tax_on_all_lines"/>
+              <button string="Cancel" class="btn-secondary" special="cancel" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="apply_taxes_all_lines_form_purchase">
+          <field name="name">apply.tax.lines.form</field>
+          <field name="model">apply.account.tax.line</field>
+          <field name="arch" type="xml">
+            <form string="description">
+              <sheet>
+                <group>
+                  <group>
+                    <field name="purchase_tax_ids" required="1" readonly="0" widget="many2many_tags"/>
+                  </group>
+                </group>
+              </sheet>
+              <footer>
+                <button string="Apply" class="btn btn-primary" type="object" name="apply_tax_on_all_lines"/>
+                  <button string="Cancel" class="btn-secondary" special="cancel" />
+              </footer>
+            </form>
+          </field>
+        </record>
+        <record model="ir.ui.view" id="apply_taxes_all_lines_form_customer_invoice">
+          <field name="name">apply.tax.lines.form</field>
+          <field name="model">apply.account.tax.line</field>
+          <field name="arch" type="xml">
+            <form string="description">
+              <sheet>
+                <group>
+                  <group>
+                    <field name="customer_invoice_tax_ids" readonly="0" widget="many2many_tags"/>
+                  </group>
+                </group>
+              </sheet>
+              <footer>
+                <button string="Apply" class="btn btn-primary" type="object" name="apply_tax_on_all_lines"/>
+                  <button string="Cancel" class="btn-secondary" special="cancel" />
+              </footer>
+            </form>
+          </field>
+        </record>
+        <record model="ir.ui.view" id="apply_taxes_all_lines_form_vendor_bill">
+          <field name="name">apply.tax.lines.form</field>
+          <field name="model">apply.account.tax.line</field>
+          <field name="arch" type="xml">
+            <form string="description">
+              <sheet>
+                <group>
+                  <group>
+                    <field name="vendor_bill_tax_ids" readonly="0" widget="many2many_tags"/>
+                  </group>
+                </group>
+              </sheet>
+              <footer>
+                <button string="Apply" class="btn btn-primary" type="object" name="apply_tax_on_all_lines"/>
+                  <button string="Cancel" class="btn-secondary" special="cancel" />
+              </footer>
+            </form>
+          </field>
+        </record>
+  </data>
+</odoo>
