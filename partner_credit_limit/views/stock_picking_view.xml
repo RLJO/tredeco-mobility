@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_lucky_stock_picking_form" model="ir.ui.view">
+        <field name="name">stock.picking.form.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="state" position="replace">
+               <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,partially_available,assigned,done,blocked" />
+            </field>
+
+            <button name="button_validate" position="after">
+	    	<button name="button_unblocked"  states="blocked" string="Unblock" type="object" class="oe_highlight" groups="partner_credit_limit.group_unblock_button"/>
+
+	     </button>
+        </field>
+    </record>
+
+</odoo>
