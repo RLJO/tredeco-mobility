@@ -10,12 +10,10 @@
     'maintainer': 'Serpent Consulting Services Pvt. Ltd.',
     'summary': 'Set credit limit warning',
     'depends': [
-<<<<<<< HEAD
         'sale_management',
     ],
     'data': [
         'views/partner_view.xml',
-=======
         'sale_management','stock'
     ],
 
@@ -24,7 +22,6 @@
 	'security/stock_security.xml',
         'views/partner_view.xml',
 	'views/stock_picking_view.xml'
->>>>>>> cc8feee8d2d449dee45ac4235615e81f2ccc59e9
     ],
     'installable': True,
     'auto_install': False,
