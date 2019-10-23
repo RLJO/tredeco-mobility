@@ -9,9 +9,27 @@
                 <button name="do_un_produce" attrs="{'invisible': [ ('state', 'not in', ('progress'))]}" string="UNCONSUME" type="object"/>
 
           </xpath>
-
         </field>
     </record>
+    <record id="view_mrp_inherit2" model="ir.ui.view">
+        <field name="name">mrp.production</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="quality_mrp.mrp_production_view_form_inherit_quality"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="show_quality_checks_and_alerts" invisible="1"/>
+            </field>
+            <xpath expr="//form//header//button[@name='check_quality']" position="replace">
+                <button name="check_quality" attrs="{'invisible': ['|',('quality_check_todo', '=', False),('show_quality_checks_and_alerts','=','False')]}" type="object" string="Quality Checks" class="oe_highlight"/>
+            </xpath>
 
+            <xpath expr="//form//header//button[@name='button_quality_alert']" position="replace">
+                <button name="button_quality_alert" type="object" string="Quality Alert" context="{'default_production_id': active_id}" attrs="{'invisible': ['|',|',('check_ids', '=', []), '&amp;', ('quality_check_fail', '=', True), ('quality_alert_count', '=', 0),('show_quality_checks_and_alerts','=','False')]}"/>
+            </xpath>
+            <xpath expr="//form//header//button[@name='button_quality_alert']" position="replace">
+                <button name="button_quality_alert" type="object" string="Quality Alert" context="{'default_production_id': active_id}" class="oe_highlight" attrs="{'invisible': ['|','|', ('quality_check_fail', '=', False), ('quality_alert_count', '!=', 0),('show_quality_checks_and_alerts','=','False')]}"/>
+            </xpath>
+        </field>
+    </record>
 
 </odoo>
