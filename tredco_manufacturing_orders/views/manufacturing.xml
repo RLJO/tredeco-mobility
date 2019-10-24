@@ -20,14 +20,13 @@
                 <field name="show_quality_checks_and_alerts" invisible="1"/>
             </field>
             <xpath expr="//form//header//button[@name='check_quality']" position="replace">
-                <button name="check_quality" attrs="{'invisible': ['|',('quality_check_todo', '=', False),('show_quality_checks_and_alerts','=','False')]}" type="object" string="Quality Checks" class="oe_highlight"/>
+                <button name="check_quality" attrs="{'invisible': ['|',('quality_check_todo', '=', False),('show_quality_checks_and_alerts','=',False)]}" type="object" string="Quality Checks" class="oe_highlight"/>
             </xpath>
-
-            <xpath expr="//form//header//button[@name='button_quality_alert']" position="replace">
-                <button name="button_quality_alert" type="object" string="Quality Alert" context="{'default_production_id': active_id}" attrs="{'invisible': ['|',|',('check_ids', '=', []), '&amp;', ('quality_check_fail', '=', True), ('quality_alert_count', '=', 0),('show_quality_checks_and_alerts','=','False')]}"/>
+            <xpath expr="//form//header/button[@name='button_quality_alert'][1]" position="replace">
+                <button name="button_quality_alert" type="object" string="Quality Alert" context="{'default_production_id': active_id}" attrs="{'invisible': ['|','|',('check_ids', '=', []),('show_quality_checks_and_alerts', '=', False), '&amp;', ('quality_check_fail', '=', True), ('quality_alert_count', '=', 0)]}"/>
             </xpath>
-            <xpath expr="//form//header//button[@name='button_quality_alert']" position="replace">
-                <button name="button_quality_alert" type="object" string="Quality Alert" context="{'default_production_id': active_id}" class="oe_highlight" attrs="{'invisible': ['|','|', ('quality_check_fail', '=', False), ('quality_alert_count', '!=', 0),('show_quality_checks_and_alerts','=','False')]}"/>
+            <xpath expr="//form/header/button[@name='button_quality_alert'][2]" position="replace">
+                <button name="button_quality_alert" type="object" string="Quality Alert" context="{'default_production_id': active_id}" class="oe_highlight" attrs="{'invisible': ['|','|', ('quality_check_fail', '=', False), ('quality_alert_count', '!=', 0),('show_quality_checks_and_alerts', '=', False)]}"/>
             </xpath>
         </field>
     </record>
