@@ -14,7 +14,7 @@
 
     'category': 'Uncategorized',
     'version': '0.1',
-    'depends':['mrp'],
+    'depends':['mrp','quality_mrp'],
     'data': [
 
         'views/manufacturing.xml',
