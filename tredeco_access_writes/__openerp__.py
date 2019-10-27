@@ -15,7 +15,8 @@
 
     # always loaded
     'data': [
-        
+
+        'security/repair.xml',
         'views/purchase.xml',
         'views/sale_order.xml',
         'views/stock_picking.xml',

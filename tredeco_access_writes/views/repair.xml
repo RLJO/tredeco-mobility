@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="repair.view_repair_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_validate']" position='attributes'>
-                    <attribute name="groups">stock.group_stock_manager</attribute>
+                    <attribute name="groups">stock.group_stock_manager,tredeco_access_writes.group_repair_manager</attribute>
                 </xpath>
                 
             </field>
