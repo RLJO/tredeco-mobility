@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Sales Planning",
+    'name': "Tredco Mobility BoM Kit Solution",
 
     'summary': """
-        Passap Plainning Of Sales""",
+        Tredco Mobility BoM Kit Solution """,
 
     'description': """
-        Passap Plainning Of Sales
+       Tredco Mobility BoM Kit Solution 
     """,
 
     'author': "Zienab Abd EL Nasser",
@@ -15,12 +15,6 @@
     'category': 'Uncategorized',
     'version': '0.1',
     'data': [
-        'security/ceo_group.xml',
-         'security/ir.model.access.csv',
-        'views/year_plan.xml',
-        'views/month_plan.xml',
-        'views/monthly_plan_report.xml',
-        'views/yearly_plan_report.xml',
-        'reports/plan_reports.xml'
+
     ],
 }
