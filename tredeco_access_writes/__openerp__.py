@@ -11,7 +11,7 @@
 
     'category': 'Uncategorized',
     'version': '0.1',
-    'depends': ['sale', 'stock', 'purchase','repair'],
+    'depends': ['sale', 'stock', 'purchase','repair','stock_account'],
 
     # always loaded
     'data': [
