@@ -14,6 +14,7 @@
 
     'category': 'Uncategorized',
     'version': '0.1',
+    'depends':['purchase','purchase_stock','mrp'],
     'data': [
 
     ],
