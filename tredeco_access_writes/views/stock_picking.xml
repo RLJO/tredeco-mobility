@@ -53,7 +53,7 @@
             <field name="context">{'default_compute_at_date': 0, 'valuation': True}</field>
         </record>
 
-        <menuitem id="menu_valuation_with_quants" name="Inventory Valuation With Quants" parent="stock.menu_warehouse_report" sequence="111" action="action_stock_inventory_valuation_new"/>
+        <menuitem id="menu_valuation_with_quants" name="Inventory Valuation With Quantities" parent="stock.menu_warehouse_report" sequence="111" action="action_stock_inventory_valuation_new"/>
 
         <record id="view_stock_product_tree_new" model="ir.ui.view">
             <field name="name">product.stock.tree.2</field>
