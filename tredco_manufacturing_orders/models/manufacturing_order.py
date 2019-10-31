@@ -18,3 +18,13 @@ class MRpProduction(models.Model):
             self.show_quality_checks_and_alerts = True
         else:
             self.show_quality_checks_and_alerts = False
+
+    def do_cancel(self):
+        for finished_product in self.finished_move_line_ids:
+            finished_product.state = 'draft'
+        moves = self.env['stock.move.line'].search([('reference', '=', self.name)])
+        for move in moves:
+            move.state = 'draft'
+        self.do_un_produce()
+        self.state = 'cancel'
+        return True

@@ -7,7 +7,9 @@
         <field name="arch" type="xml">
           <xpath expr="//button[@name='open_produce_product']" position="after">
                 <button name="do_un_produce" attrs="{'invisible': [ ('state', 'not in', ('progress'))]}" string="UNCONSUME" type="object"/>
-
+          </xpath>
+          <xpath expr="//header//button[@name='button_scrap']" position="after">
+                <button name="do_cancel" attrs="{'invisible': [ ('state', 'not in', ('done'))]}" string="Cancel" type="object"/>
           </xpath>
         </field>
     </record>
