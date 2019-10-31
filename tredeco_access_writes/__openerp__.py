@@ -11,11 +11,12 @@
 
     'category': 'Uncategorized',
     'version': '0.1',
-    'depends': ['sale', 'stock', 'purchase','repair'],
+    'depends': ['sale', 'stock', 'purchase','repair','stock_account'],
 
     # always loaded
     'data': [
-        
+
+        'security/repair.xml',
         'views/purchase.xml',
         'views/sale_order.xml',
         'views/stock_picking.xml',
