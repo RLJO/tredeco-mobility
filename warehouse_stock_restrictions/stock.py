@@ -40,3 +40,4 @@ class stock_move(models.Model):
                 raise Warning(message % self.location_dest_id.name)
 
 
+    picking_partner_id = fields.Many2one('res.partner', string='Partner', related='picking_id.partner_id', store=True)

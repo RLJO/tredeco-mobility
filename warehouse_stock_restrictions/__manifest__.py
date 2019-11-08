@@ -41,6 +41,7 @@
         'users_view.xml',
         'security/security.xml',
         # 'security/ir.model.access.csv',
+        'views/stock_move_view.xml'
     ],
     
     

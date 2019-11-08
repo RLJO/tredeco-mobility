@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<record id="view_move_search_inherit" model="ir.ui.view">
+    <field name="name">stock.move.search</field>
+    <field name="model">stock.move</field>
+    <field name="inherit_id" ref="stock.view_move_search"/>
+    <field eval="3" name="priority"/>
+    <field name="arch" type="xml">
+        <filter name='groupby_date' position='after'>
+            <filter string="Partner" name="by_picking_partner_id" domain="[]"  context="{'group_by':'picking_partner_id'}"/>
+        </filter>
+    </field>
+</record>
+</odoo>
