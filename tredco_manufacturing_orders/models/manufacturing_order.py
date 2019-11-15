@@ -1,4 +1,5 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 
 class MRpProduction(models.Model):
     _inherit = 'mrp.production'
@@ -28,3 +29,21 @@ class MRpProduction(models.Model):
         self.do_un_produce()
         self.state = 'cancel'
         return True
+
+    @api.multi
+    def open_produce_product(self):
+        self.ensure_one()
+        if not all(self.move_raw_ids.mapped('product_uom_qty')):
+            raise UserError(_('You are not allowed to continue because there is a quantity = 0.'))
+        return super(MRpProduction, self).open_produce_product()
+
+
+class MRPProductProduce(models.TransientModel):
+    _inherit = 'mrp.product.produce'
+
+    @api.multi
+    def do_produce(self):
+        if not all(self.produce_line_ids.mapped('qty_done')):
+            raise UserError(_('You are not allowed to continue because there is a quantity = 0.'))
+        return super(MRPProductProduce, self).do_produce()
+
