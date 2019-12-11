@@ -1,5 +1,5 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError,ValidationError
 
 class MRpProduction(models.Model):
     _inherit = 'mrp.production'
