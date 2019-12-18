@@ -37,12 +37,14 @@ class ApplyAccountTaxLine(models.Model):
                         pass
                     else:
                         line.invoice_line_tax_ids = self.customer_invoice_tax_ids
+                accountinvoice_obj._onchange_invoice_line_ids()
             elif self.vendor_bill_tax_ids:
                 for line in accountinvoice_obj.invoice_line_ids:
                     if line.invoice_line_tax_ids == self.vendor_bill_tax_ids:
                         pass
                     else:
                         line.invoice_line_tax_ids = self.vendor_bill_tax_ids
+                accountinvoice_obj._onchange_invoice_line_ids()
 
 class SaleOrderInherit(models.Model):
     _inherit = "sale.order"
