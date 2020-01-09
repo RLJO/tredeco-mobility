@@ -37,12 +37,12 @@ class MRpProduction(models.Model):
             raise UserError(_('You are not allowed to continue because there is a quantity = 0.'))
         return super(MRpProduction, self).open_produce_product()
 
-    @api.multi
-    def open_produce_product(self):
-        for raw_id in self.move_raw_ids:
-            if raw_id.product_uom_qty > raw_id.reserved_availability:
-                raise ValidationError(_('You are allowed to continue because there is not enough quantity in stock'))
-        return super(MRpProduction,self).open_produce_product()
+    # @api.multi
+    # def open_produce_product(self):
+    #     for raw_id in self.move_raw_ids:
+    #         if raw_id.product_uom_qty > raw_id.reserved_availability:
+    #             raise ValidationError(_('You are allowed to continue because there is not enough quantity in stock'))
+    #     return super(MRpProduction,self).open_produce_product()
 
 class MRPProductProduce(models.TransientModel):
     _inherit = 'mrp.product.produce'
