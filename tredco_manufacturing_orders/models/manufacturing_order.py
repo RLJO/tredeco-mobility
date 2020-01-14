@@ -7,7 +7,7 @@ from odoo.tools.float_utils import float_round, float_compare, float_is_zero
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    def unlinks(self):
+    def unlink(self):
         precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         for ml in self:
             # if ml.state in ('done', 'cancel'):
@@ -22,10 +22,11 @@ class StockMoveLine(models.Model):
                     else:
                         raise
         moves = self.mapped('move_id')
-        res = super(StockMoveLine, self).unlinks()
+        res = super(StockMoveLine, self).unlink()
         if moves:
             moves._recompute_state()
         return res
+    
 class MRpProduction(models.Model):
     _inherit = 'mrp.production'
 
@@ -34,7 +35,7 @@ class MRpProduction(models.Model):
 
     def do_un_produce(self):
         # Unlink the moves related to manufacture order
-        moves = self.env['stock.move.line'].search([('reference', '=', self.name)]).unlinks()
+        moves = self.env['stock.move.line'].search([('reference', '=', self.name)]).unlink()
         self.state ='confirmed'
 
     @api.multi
