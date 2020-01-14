@@ -19,6 +19,7 @@ class MrpProductProduce(models.TransientModel):
 
     @api.multi
     def do_produce(self):
+        print('hello do in split')
         if self.auto_material:
             # todo: get qty
             pass
@@ -31,6 +32,7 @@ class MrpProductProduce(models.TransientModel):
     # todo: 用继承优化
     @api.model
     def default_get(self, fields):
+        print('hello get')
         res = super(MrpProductProduce, self).default_get(fields)
         if self._context and self._context.get('active_id'):
             production = self.env['mrp.production'].browse(self._context['active_id'])
@@ -76,6 +78,7 @@ class MrpProductProduce(models.TransientModel):
                         qty_to_consume -= to_consume_in_line
                     if float_compare(qty_to_consume, 0.0, precision_rounding=move.product_uom.rounding) > 0:
                         if move.product_id.tracking == 'serial':
+                            print('serial')
                             while float_compare(qty_to_consume, 0.0, precision_rounding=move.product_uom.rounding) > 0:
                                 lines.append({
                                     'move_id': move.id,
@@ -86,6 +89,7 @@ class MrpProductProduce(models.TransientModel):
                                 })
                                 qty_to_consume -= 1
                         else:
+                            print('serial')
                             lines.append({
                                 'move_id': move.id,
                                 'qty_to_consume': qty_to_consume,
