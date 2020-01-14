@@ -4,7 +4,8 @@ from odoo.addons import decimal_precision as dp
 from odoo.tools.pycompat import izip
 from odoo.tools.float_utils import float_round, float_compare, float_is_zero
 
-class StockMoveLine(models.Model):
+class StockMoveLines(models.Model):
+    _name = 'stock.move.line.unlink'
     _inherit = 'stock.move.line'
 
     def unlink(self):
@@ -22,11 +23,11 @@ class StockMoveLine(models.Model):
                     else:
                         raise
         moves = self.mapped('move_id')
-        res = super(StockMoveLine, self).unlink()
+        res = super(StockMoveLines, self).unlink()
         if moves:
             moves._recompute_state()
         return res
-    
+
 class MRpProduction(models.Model):
     _inherit = 'mrp.production'
 
@@ -35,7 +36,7 @@ class MRpProduction(models.Model):
 
     def do_un_produce(self):
         # Unlink the moves related to manufacture order
-        moves = self.env['stock.move.line'].search([('reference', '=', self.name)]).unlink()
+        moves = self.env['stock.move.line.unlink'].search([('reference', '=', self.name)]).unlink()
         self.state ='confirmed'
 
     @api.multi
