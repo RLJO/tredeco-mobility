@@ -4,6 +4,28 @@ from odoo.addons import decimal_precision as dp
 from odoo.tools.pycompat import izip
 from odoo.tools.float_utils import float_round, float_compare, float_is_zero
 
+class StockMoveLine(models.Model):
+    _inherit = 'stock.move.line'
+
+    def unlink(self):
+        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+        for ml in self:
+            # if ml.state in ('done', 'cancel'):
+            #     raise UserError(_('You can not delete product moves if the picking is done. You can only correct the done quantities.'))
+            # Unlinking a move line should unreserve.
+            if ml.product_id.type == 'product' and not ml.location_id.should_bypass_reservation() and not float_is_zero(ml.product_qty, precision_digits=precision):
+                try:
+                    self.env['stock.quant']._update_reserved_quantity(ml.product_id, ml.location_id, -ml.product_qty, lot_id=ml.lot_id, package_id=ml.package_id, owner_id=ml.owner_id, strict=True)
+                except UserError:
+                    if ml.lot_id:
+                        self.env['stock.quant']._update_reserved_quantity(ml.product_id, ml.location_id, -ml.product_qty, lot_id=False, package_id=ml.package_id, owner_id=ml.owner_id, strict=True)
+                    else:
+                        raise
+        moves = self.mapped('move_id')
+        res = super(StockMoveLine, self).unlink()
+        if moves:
+            moves._recompute_state()
+        return res
 class MRpProduction(models.Model):
     _inherit = 'mrp.production'
 
@@ -56,25 +78,3 @@ class MRPProductProduce(models.TransientModel):
             raise UserError(_('You are not allowed to continue because there is a quantity = 0.'))
         return super(MRPProductProduce, self).do_produce()
 
-class StockMoveLine(models.Model):
-    _inherit = 'stock.move.line'
-
-    def unlink(self):
-        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-        for ml in self:
-            # if ml.state in ('done', 'cancel'):
-            #     raise UserError(_('You can not delete product moves if the picking is done. You can only correct the done quantities.'))
-            # Unlinking a move line should unreserve.
-            if ml.product_id.type == 'product' and not ml.location_id.should_bypass_reservation() and not float_is_zero(ml.product_qty, precision_digits=precision):
-                try:
-                    self.env['stock.quant']._update_reserved_quantity(ml.product_id, ml.location_id, -ml.product_qty, lot_id=ml.lot_id, package_id=ml.package_id, owner_id=ml.owner_id, strict=True)
-                except UserError:
-                    if ml.lot_id:
-                        self.env['stock.quant']._update_reserved_quantity(ml.product_id, ml.location_id, -ml.product_qty, lot_id=False, package_id=ml.package_id, owner_id=ml.owner_id, strict=True)
-                    else:
-                        raise
-        moves = self.mapped('move_id')
-        res = super(StockMoveLine, self).unlink()
-        if moves:
-            moves._recompute_state()
-        return res
