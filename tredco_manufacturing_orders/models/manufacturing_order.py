@@ -22,7 +22,7 @@ class StockMoveLine(models.Model):
                     else:
                         raise
         moves = self.mapped('move_id')
-        res = super(StockMoveLine, self).unlink()
+        res = super(StockMoveLine, self).unlinks()
         if moves:
             moves._recompute_state()
         return res
