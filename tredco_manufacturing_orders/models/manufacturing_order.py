@@ -66,7 +66,7 @@ class MRpProduction(models.Model):
 
     @api.multi
     def open_produce_product(self):
-        for raw_id in self.move_raw_ids:
+        # for raw_id in self.move_raw_ids:
             # if raw_id.product_uom_qty > raw_id.reserved_availability:
             #     raise ValidationError(_('You are allowed to continue because there is not enough quantity in stock'))
         return super(MRpProduction,self).open_produce_product()
