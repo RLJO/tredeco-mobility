@@ -56,7 +56,7 @@ class MRPProductProduce(models.TransientModel):
             raise UserError(_('You are not allowed to continue because there is a quantity = 0.'))
         return super(MRPProductProduce, self).do_produce()
 
-class StockMoveLine(models.TransientModel):
+class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
     def unlink(self):
