@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_contract,contract,model_contract,group_contract,1,1,1,1
+access_purchase_request_user,purchase_request,model_purchase_request,group_purchase_request_user,1,1,1,0
+access_purchase_request_line_user,purchase_request_line,model_purchase_request_line,group_purchase_request_user,1,1,1,0
+access_purchase_request_manager,purchase_request,model_purchase_request,group_purchase_request_manager,1,1,1,1
+access_purchase_request_line_manager,purchase_request_line,model_purchase_request_line,group_purchase_request_manager,1,1,1,1
+
+
+
+
+
+
+
+
+
