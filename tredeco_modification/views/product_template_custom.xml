@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+
+        <record id="product_template_form_view_custom" model="ir.ui.view">
+            <field name="name">product template</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="mrp_account.product_product_inherit_form_view_cost_structure"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_cost_structure']" position="replace">
+                 <button name="action_cost_structure" type="object"
+                        class="oe_stat_button" icon="fa-dollar" string="Cost Analysis" attrs="{'invisible': [('mrp_product_qty', '=', 0)]}" groups="tredeco_modification.group_show_smart_cost_analysis">
+                    </button>
+            </xpath>
+
+            </field>
+        </record>
+
+
+
+
+    </data>
+</odoo>

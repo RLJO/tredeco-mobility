@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="0">
+
+    <record model="ir.module.category" id="module_show_smart_buttons">
+        <field name="name">Show Cost Smart Buttons</field>
+        <field name="description">Show Cost Smart Buttons</field>
+        <field name="sequence">7</field>
+    </record>
+
+    <record id="group_show_smart_cost_analysis" model="res.groups">
+        <field name="name">Show Cost analysis button in Bill of Materials View</field>
+        <field name="category_id" ref="module_show_smart_buttons"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+    </record>
+      <record id="group_show_smart_cost_analysis_manufacturing_order" model="res.groups">
+        <field name="name">Show Cost analysis  in Manufacturing Order View</field>
+        <field name="category_id" ref="module_show_smart_buttons"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+    </record>
+    <record id="group_show_smart_cost_structure" model="res.groups">
+        <field name="name">Show Cost and structure Buttons Product View</field>
+        <field name="category_id" ref="module_show_smart_buttons"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+    </record>
+
+
+
+
+</data>
+</odoo>
