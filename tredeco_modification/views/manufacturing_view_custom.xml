@@ -4,13 +4,25 @@
 
 
         <record id="manufacturing_form_view_custom" model="ir.ui.view">
-            <field name="name">manufacturing</field>
+            <field name="name">manufacturing bill of material</field>
             <field name="model">mrp.bom</field>
             <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']/button[@icon='fa-bars']" position="replace">
                 <button name="%(mrp.action_report_mrp_bom)d" type="action" class="oe_stat_button" icon="fa-bars" string="Structure &amp; Cost"  groups="tredeco_modification.group_show_smart_cost_structure"/>
             </xpath>
+
+            </field>
+        </record>
+
+         <record id="manufacturing_order_form_view_custom" model="ir.ui.view">
+            <field name="name">manufacturing order</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp_account.mrp_production_form_inherit_view6"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']/button[@icon='fa-circle-o']" position="replace">
+<button name="373" type="action" class="oe_stat_button" icon="fa-circle-o" string="Cost Analysis" attrs="{'invisible': [('state', '!=', 'done')]}" groups="tredeco_modification.group_show_smart_cost_analysis_manufacturing_order">
+                    </button>            </xpath>
 
             </field>
         </record>

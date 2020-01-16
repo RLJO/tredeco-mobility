@@ -4,7 +4,8 @@
     'version' : '1.0',
     'category': '',
     'description': """
-   tredeco modification to remove smart buttons cost analysis from product view and structure and cost from bill of matrials
+   tredeco_modification used to show or hid  smart buttons cost analysis from product view and structure and cost from bill of materials and cost analysis smart buttons from manufacturing order 
+   and create security groups in user settings to control on display buttons or hid it
 
     """,
     'depends' : ['base','mrp_account','mrp'],
