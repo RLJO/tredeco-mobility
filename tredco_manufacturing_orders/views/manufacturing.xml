@@ -11,6 +11,9 @@
           <xpath expr="//header//button[@name='button_scrap']" position="after">
                 <button name="do_cancel" attrs="{'invisible': [ ('state', 'not in', ('done'))]}" string="Cancel" type="object"/>
           </xpath>
+             <xpath expr="//header//button[@name='post_inventory']" position="replace">
+                    <button name="post_inventory" string="Post Inventory" type="object" attrs="{'invisible': [('post_visible', '=', False)]}" groups="base.group_no_one,mrp.group_mrp_manager,mrp.group_mrp_user"/>
+          </xpath>
         </field>
     </record>
     <record id="view_mrp_inherit2" model="ir.ui.view">
