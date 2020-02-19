@@ -67,10 +67,10 @@ class add_checkbox(models.Model):
 
                         if item.state !='done' and item.state != 'cancel':
 
-                                stock_quatity=self.env['stock.quant'].search([('lot_id','=',item.lot_id.id),('product_id','=',item.product_id.id)])
+                                stock_quatity=self.env['stock.quant'].search([('product_id','=',item.product_id.id)])
 
                                 for product in stock_quatity:
-                                    if item.product_id.id== product.product_id.id and item.lot_id.id== product.lot_id.id :
+                                    if item.product_id.id== product.product_id.id:
                                         print('product name', item.product_id.name)
                                         print('serial number of finished', item.lot_id.id)
                                         print('serial of actual product',product.lot_id.id)
@@ -97,8 +97,6 @@ class add_checkbox(models.Model):
                                                 'quantity': consum.quantity - total,
                                             })
                                     for rec in stock_move_id:
-                                        for lot in rec.active_move_line_ids:
-                                             if item.lot_id.id == lot.lot_produced_id.id:
 
                                                 if row.state != 'done':
                                                     row.state = 'done'
