@@ -75,8 +75,15 @@ class add_checkbox(models.Model):
                                         print('serial number of finished', item.lot_id.id)
                                         print('serial of actual product',product.lot_id.id)
 
-
-
+                                        # product.sudo().create({
+                                        #     'product_id': product.product_id.id,
+                                        #     'location_id': product.location_id.id,
+                                        #     'quantity': product.quantity + item.qty_done,
+                                        #     'reserved_quantity': item.qty_done,
+                                        #     'lot_id': item.lot_id.id,
+                                        #     'product_uom_id': product.product_uom_id.id,
+                                        #
+                                        # })
                                         product.sudo().write({
                                             'quantity' :product.quantity +item.qty_done,
                                         })
