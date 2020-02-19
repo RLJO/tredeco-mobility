@@ -67,7 +67,7 @@ class add_checkbox(models.Model):
 
                         if item.state !='done' and item.state != 'cancel':
 
-                                stock_quatity=self.env['stock.quant'].search([('product_id','=',item.product_id.id)])
+                                stock_quatity=self.env['stock.quant'].search([('product_id','=',item.product_id.id)],limit=1)
 
                                 for product in stock_quatity:
                                     if item.product_id.id== product.product_id.id:
