@@ -6,6 +6,17 @@ from odoo.tools.float_utils import float_round, float_compare, float_is_zero
 
 
 
+# class StockQuant(models.Model):
+#     _inherit = 'stock.quant'
+#
+#     @api.constrains('quantity')
+#     def check_quantity(self):
+#         for quant in self:
+#             if float_compare(quant.quantity, 1,
+#                              precision_rounding=quant.product_uom_id.rounding) > 0 and quant.lot_id and quant.product_id.tracking == 'serial':
+#                 print('hello')
+#                 # raise ValidationError(_('A serial number should only be linked to a single product.'))
+
 
 class addcheckbox(models.Model):
     _inherit = "stock.move.line"
@@ -50,43 +61,48 @@ class add_checkbox(models.Model):
             for order in self:
                 # moves_to_do = order.move_raw_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
 
-                products_finished = order.finished_move_line_ids.filtered(lambda x:x not in ('done', 'cancel') and (x.chick_box == True))
+                products_finished = order.finished_move_line_ids.filtered(lambda x:x.chick_box == True)
                 if products_finished:
-                    print('products_finished',products_finished)
-                    # print(products_finished.product_id.name)
                     for item in products_finished:
-                        if item.state !='done':
-                            print('state',item.state)
-                            print('product',item.lot_id.id)
-                            stock_quatity=self.env['stock.quant'].search([('product_id','=',item.product_id.id),('lot_id','=',item.lot_id.id)])
-                            item.state='done'
-                            for product in stock_quatity:
 
-                                product.sudo().write({
-                                    'quantity' :product.quantity +item.qty_done,
-                                })
+                        if item.state !='done' and item.state != 'cancel':
 
-                            for row in order.move_raw_ids:
-                                stock_move_id = self.env['stock.move'].search([('product_id', '=', row.product_id.id)])
+                                stock_quatity=self.env['stock.quant'].search([('lot_id','=',item.lot_id.id),('product_id','=',item.product_id.id)])
 
-                                stock_product_id = self.env['stock.quant'].search([('product_id', '=', row.product_id.id)])
-                                for consum in stock_product_id:
+                                for product in stock_quatity:
+                                    if item.product_id.id== product.product_id.id and item.lot_id.id== product.lot_id.id :
+                                        print('product name', item.product_id.name)
+                                        print('serial number of finished', item.lot_id.id)
+                                        print('serial of actual product',product.lot_id.id)
 
-                                    if consum.product_id.id == row.product_id.id:
 
-                                        total_first = row.product_uom_qty / order.product_qty
 
-                                        total = total_first * item.qty_done
-
-                                        consum.sudo().write({
-                                            'quantity': consum.quantity - total,
+                                        product.sudo().write({
+                                            'quantity' :product.quantity +item.qty_done,
                                         })
-                                for rec in stock_move_id:
-                                    for lot in rec.active_move_line_ids:
-                                         if item.lot_id.id == lot.lot_produced_id.id:
+                                        item.state = 'done'
+                                for row in order.move_raw_ids:
+                                    stock_move_id = self.env['stock.move'].search([('product_id', '=', row.product_id.id)])
 
-                                            if row.state != 'done':
-                                                row.state = 'done'
+                                    stock_product_id = self.env['stock.quant'].search([('product_id', '=', row.product_id.id)])
+                                    for consum in stock_product_id:
+
+                                        if consum.product_id.id == row.product_id.id:
+
+                                            total_first = row.product_uom_qty / order.product_qty
+
+                                            total = total_first * item.qty_done
+
+                                            consum.sudo().write({
+                                                'quantity': consum.quantity - total,
+                                            })
+                                    for rec in stock_move_id:
+                                        for lot in rec.active_move_line_ids:
+                                             if item.lot_id.id == lot.lot_produced_id.id:
+
+                                                if row.state != 'done':
+                                                    row.state = 'done'
+
 
 
 
