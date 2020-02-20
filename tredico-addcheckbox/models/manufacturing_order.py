@@ -66,16 +66,11 @@ class add_checkbox(models.Model):
                     for item in products_finished:
 
                         if item.state !='done' and item.state != 'cancel':
-
-                                stock_quatity=self.env['stock.quant'].search([('product_id','=',item.product_id.id)])
-
-                                for product in stock_quatity:
-
-                                        new_product=product.sudo().create({
-                                            'product_id': product.product_id.id,
+                                        new_product=self.env['stock.quant'].sudo().create({
+                                            'product_id': item.product_id.id,
                                             'product_qty': item.qty_done,
                                             'lot_id': item.lot_id.id,
-                                            'location_id':product.location_id.id,
+                                            'location_id':12,
                                             'quantity':0,
 
                                         })
