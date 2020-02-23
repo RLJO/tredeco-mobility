@@ -66,7 +66,7 @@ class add_checkbox(models.Model):
                     for item in products_finished:
 
                         if item.state !='done' and item.state != 'cancel':
-                                        new_product=self.env['stock.quant'].sudo().create({
+                                new_product=self.env['stock.quant'].sudo().create({
                                             'product_id': item.product_id.id,
                                             'product_qty': item.qty_done,
                                             'lot_id': item.lot_id.id,
@@ -74,34 +74,42 @@ class add_checkbox(models.Model):
                                             'quantity':0,
 
                                         })
-                                        print('new product_quantity',new_product.quantity)
+                                print('new product_quantity',new_product.quantity)
 
 
 
-                                        new_product.sudo().write({
+                                new_product.sudo().write({
                                                     'quantity' :  item.qty_done,
                                                 })
 
-                                        item.state = 'done'
-                                # for row in order.move_raw_ids:
-                                #     stock_move_id = self.env['stock.move'].search([('product_id', '=', row.product_id.id)])
-                                #
-                                #     stock_product_id = self.env['stock.quant'].search([('product_id', '=', row.product_id.id)])
-                                #     for consum in stock_product_id:
-                                #
-                                #         if consum.product_id.id == row.product_id.id:
-                                #
-                                #             total_first = row.product_uom_qty / order.product_qty
-                                #
-                                #             total = total_first * item.qty_done
-                                #
-                                #             consum.sudo().write({
-                                #                 'quantity': consum.quantity - total,
-                                #             })
-                                #     for rec in stock_move_id:
-                                #
-                                #                 if row.state != 'done':
-                                #                     row.state = 'done'
+                                item.state = 'done'
+                                for row in order.move_raw_ids:
+                                    if row.needs_lots==True:
+                                                stock_move_id = self.env['stock.move'].search([('product_id', '=', row.product_id.id)])
+                                                for stock_move in stock_move_id:
+                                                  for move_line in stock_move.active_move_line_ids:
+                                                    if row.product_id.id== stock_move.product_id.id and item.lot_id.id == move_line.lot_produced_id.id:
+
+                                                        new_fram = self.env['stock.quant'].sudo().create({
+                                                            'product_id': row.product_id.id,
+                                                            'product_qty': 0,
+                                                            'lot_id': move_line.lot_id.id,
+                                                            'location_id': 12,
+                                                            'quantity': 0,
+
+                                                        })
+
+
+
+                                                        total_first = row.product_uom_qty / order.product_qty
+
+                                                        total = total_first * item.qty_done
+
+                                                        new_fram.sudo().write({
+                                                                    'quantity': -1*total,
+                                                                })
+
+
 
 
 
