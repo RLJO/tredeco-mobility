@@ -57,14 +57,21 @@ class add_checkbox(models.Model):
     def do_un_produce(self):
         # Unlink the moves related to manufacture order
         products_finished = self.finished_move_line_ids.filtered(lambda x: (x.chick_box == True) and(x.state=='done'))
-        for item in products_finished:
-            moves = self.env['stock.move.line'].search([('lot_id', '=', item.lot_id.id)])
-            moves.unlink()
-            item.state='confirmed'
+        new_serial = self.env['stock.quant'].search([('product_id','=',products_finished.product_id.id),('lot_id', '=',products_finished.lot_id.id)])
+        for item in new_serial:
+            if item.lot_id.id == products_finished.lot_id.id and item.product_id.id==products_finished.product_id.id:
+
+                item.sudo().write({
+                    'quantity': -1*products_finished.qty_done,
+                })
+
+                moves = self.env['stock.move.line'].search([('lot_id', '=', item.lot_id.id)])
+                moves.unlink()
+                products_finished.state='confirmed'
 
         moves = self.env['stock.move.line'].search([('reference', '=', self.name)])
         moves.unlink()
-        self.state = 'confirmed'
+        self.state = 'progress'
 
     @api.multi
     def post_inventory(self):
