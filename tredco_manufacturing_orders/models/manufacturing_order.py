@@ -17,7 +17,8 @@ class MRpProduction(models.Model):
 
     def do_un_produce(self):
         # Unlink the moves related to manufacture order
-        moves = self.env['stock.move.line.unlink'].search([('reference', '=', self.name)]).unlink()
+        moves = self.env['stock.move.line'].search([('reference', '=', self.name)])
+        moves.unlink()
         self.state ='confirmed'
 
     @api.multi
