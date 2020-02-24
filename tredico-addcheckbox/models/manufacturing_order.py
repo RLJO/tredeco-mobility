@@ -8,6 +8,7 @@ from odoo.tools.float_utils import float_round, float_compare, float_is_zero
 
 class StockQuant(models.Model):
     _inherit = 'stock.quant'
+    manufacturing_id=fields.Many2one('mrp.production')
 
     @api.model
     def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None,
@@ -79,7 +80,7 @@ class StockQuant(models.Model):
 class addcheckbox(models.Model):
     _inherit = "stock.move.line"
     def unlink(self):
-        print('unlink')
+
         precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         for ml in self:
             # if ml.state in ('done', 'cancel'):
@@ -115,13 +116,38 @@ class add_checkbox(models.Model):
     def do_un_produce(self):
         # Unlink the moves related to manufacture order
         products_finished = self.finished_move_line_ids.filtered(lambda x: (x.chick_box == True) and(x.state=='done'))
-        new_serial = self.env['stock.quant'].search([('product_id','=',products_finished.product_id.id),('lot_id', '=',products_finished.lot_id.id)])
+
+        products_raw = self.move_raw_ids.filtered(lambda x: (x.needs_lots == True) and(x.state=='done'))
+
+        for product in products_finished:
+            if product.state == 'done':
+                new_serial = self.env['stock.quant'].search([('product_id','=',product.product_id.id),('lot_id', '=',product.lot_id.id)])
+
+                for serial in new_serial:
+                    if serial:
+
+                        moves = self.env['stock.move.line'].search([('reference', '=', self.name), ('lot_id', '=', serial.lot_id.id)])
+                        for move in moves:
+                            serial.sudo().unlink()
+
+                            move.unlink()
+                for row in self.move_raw_ids:
+                    if row.needs_lots == True and row.state=='done':
+                        stock_move_id = self.env['stock.move'].search([('product_id', '=', row.product_id.id)])
+                        for stock_move in stock_move_id:
+                            for move_line in stock_move.active_move_line_ids:
+                                if product.lot_id.id == move_line.lot_produced_id.id:
+                                    new_serial2 = self.env['stock.quant'].search( [('product_id', '=', row.product_id.id),('lot_id', '=', move_line.lot_id.id)])
+
+                                    for seria_pro in new_serial2:
+                                            seria_pro.sudo().unlink()
+
+                                            row.state='confirmed'
+                    else:
+                        row.state='confirmed'
 
 
-        moves = self.env['stock.move.line'].search([('reference', '=', self.name),('lot_id', '=', products_finished.lot_id.id)])
-        moves.unlink()
-        new_serial.sudo().unlink()
-        products_finished.state='confirmed'
+                product.state='confirmed'
 
         moves = self.env['stock.move.line'].search([('reference', '=', self.name)])
         moves.unlink()
@@ -130,7 +156,7 @@ class add_checkbox(models.Model):
     @api.multi
     def post_inventory(self):
         if self.check_box == True:
-            print('if')
+
             for order in self:
                 # moves_to_do = order.move_raw_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
 
@@ -140,6 +166,7 @@ class add_checkbox(models.Model):
 
                         if item.state !='done' and item.state != 'cancel':
                                 new_product=self.env['stock.quant'].sudo().create({
+                                            'manufacturing_id':self.id,
                                             'product_id': item.product_id.id,
                                             'product_qty': item.qty_done,
                                             'lot_id': item.lot_id.id,
@@ -147,7 +174,7 @@ class add_checkbox(models.Model):
                                             'quantity':0,
 
                                         })
-                                print('new product_quantity',new_product.quantity)
+
 
 
 
@@ -164,6 +191,7 @@ class add_checkbox(models.Model):
                                                     if row.product_id.id== stock_move.product_id.id and item.lot_id.id == move_line.lot_produced_id.id:
 
                                                         new_fram = self.env['stock.quant'].sudo().create({
+                                                            'manufacturing_id': self.id,
                                                             'product_id': row.product_id.id,
                                                             'product_qty': 0,
                                                             'lot_id': move_line.lot_id.id,
@@ -181,6 +209,10 @@ class add_checkbox(models.Model):
                                                         new_fram.sudo().write({
                                                                     'quantity': -1*total,
                                                                 })
+                                                        row.state='done'
+                                    else:
+                                        row.state='done'
+                order.state='progress'
 
 
 
@@ -188,7 +220,7 @@ class add_checkbox(models.Model):
 
 
         else:
-            print('else')
+
 
             for order in self:
 
@@ -211,9 +243,7 @@ class add_checkbox(models.Model):
                                 # Link all movelines in the consumed with same lot_produced_id false or the correct lot_produced_id
                                 filtered_lines = consume_move_lines.filtered(lambda x: (x.lot_produced_id == moveline.lot_id) and (moveline.chick_box == True))
                                 moveline.write({'consume_line_ids': [(6, 0, [x for x in filtered_lines.ids])]})
-                                print(moveline)
-                                print(moveline.lot_id)
-                                print(filtered_lines)
+
                             else:
                                 # Link with everything
                                 moveline.write({'consume_line_ids': [(6, 0, [x for x in consume_move_lines.ids])]})
