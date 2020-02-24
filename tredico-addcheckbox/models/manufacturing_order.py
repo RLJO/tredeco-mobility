@@ -109,6 +109,8 @@ class add_checkbox(models.Model):
     @api.onchange('finished_move_line_ids')
     def get_check_value(self):
         for item in self:
+            for rec in item.move_raw_ids:
+                print(rec.state)
             for line in item.finished_move_line_ids:
                 if line.chick_box==True:
                     item.check_box=True
@@ -142,9 +144,9 @@ class add_checkbox(models.Model):
                                     for seria_pro in new_serial2:
                                             seria_pro.sudo().unlink()
 
-                                            row.state='confirmed'
+                                            row.state='assigned'
                     else:
-                        row.state='confirmed'
+                        row.state='assigned'
 
 
                 product.state='confirmed'
