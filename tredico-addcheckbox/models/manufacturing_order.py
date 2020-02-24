@@ -125,7 +125,7 @@ class add_checkbox(models.Model):
 
         moves = self.env['stock.move.line'].search([('reference', '=', self.name)])
         moves.unlink()
-        self.state = 'progress'
+        self.state = 'confirmed'
 
     @api.multi
     def post_inventory(self):
