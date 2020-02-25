@@ -15,10 +15,7 @@ class MRpProduction(models.Model):
 
     show_quality_checks_and_alerts = fields.Boolean(compute='check_quantity')
 
-    def do_un_produce(self):
-        # Unlink the moves related to manufacture order
-        moves = self.env['stock.move.line.unlink'].search([('reference', '=', self.name)]).unlink()
-        self.state ='confirmed'
+
 
     @api.multi
     def check_quantity(self):
