@@ -109,51 +109,52 @@ class add_checkbox(models.Model):
     @api.onchange('finished_move_line_ids')
     def get_check_value(self):
         for item in self:
-            for rec in item.move_raw_ids:
-                print(rec.state)
             for line in item.finished_move_line_ids:
                 if line.chick_box==True:
                     item.check_box=True
 
-    def do_un_produce(self):
-        # Unlink the moves related to manufacture order
-        products_finished = self.finished_move_line_ids.filtered(lambda x: (x.chick_box == True) and(x.state=='done'))
-
-        products_raw = self.move_raw_ids.filtered(lambda x: (x.needs_lots == True) and(x.state=='done'))
-
-        for product in products_finished:
-            if product.state == 'done':
-                new_serial = self.env['stock.quant'].search([('product_id','=',product.product_id.id),('lot_id', '=',product.lot_id.id)])
-
-                for serial in new_serial:
-                    if serial:
-
-                        moves = self.env['stock.move.line'].search([('reference', '=', self.name), ('lot_id', '=', serial.lot_id.id)])
-                        for move in moves:
-                            serial.sudo().unlink()
-
-                            move.unlink()
-                for row in self.move_raw_ids:
-                    if row.needs_lots == True and row.state=='done':
-                        stock_move_id = self.env['stock.move'].search([('product_id', '=', row.product_id.id)])
-                        for stock_move in stock_move_id:
-                            for move_line in stock_move.active_move_line_ids:
-                                if product.lot_id.id == move_line.lot_produced_id.id:
-                                    new_serial2 = self.env['stock.quant'].search( [('product_id', '=', row.product_id.id),('lot_id', '=', move_line.lot_id.id)])
-
-                                    for seria_pro in new_serial2:
-                                            seria_pro.sudo().unlink()
-
-                                            row.state='assigned'
-                    else:
-                        row.state='assigned'
-
-
-                product.state='confirmed'
-
-        moves = self.env['stock.move.line'].search([('reference', '=', self.name)])
-        moves.unlink()
-        self.state = 'confirmed'
+    # def do_un_produce(self):
+    #     moves = self.env['stock.move.line'].search([('reference', '=', self.name)]).unlink()
+    #
+    #     self.state = 'confirmed'
+    #     # # Unlink the moves related to manufacture order
+    #     # products_finished = self.finished_move_line_ids.filtered(lambda x: (x.chick_box == True) and(x.state=='done'))
+    #     #
+    #     # products_raw = self.move_raw_ids.filtered(lambda x: (x.needs_lots == True) and(x.state=='done'))
+    #     #
+    #     # for product in products_finished:
+    #     #     if product.state == 'done':
+    #     #         new_serial = self.env['stock.quant'].search([('product_id','=',product.product_id.id),('lot_id', '=',product.lot_id.id)])
+    #     #
+    #     #         for serial in new_serial:
+    #     #             if serial:
+    #     #
+    #     #                 moves = self.env['stock.move.line'].search([('reference', '=', self.name), ('lot_id', '=', serial.lot_id.id)])
+    #     #                 for move in moves:
+    #     #                     serial.sudo().unlink()
+    #     #
+    #     #                     move.unlink()
+    #     #         for row in self.move_raw_ids:
+    #     #             if row.needs_lots == True and row.state=='done':
+    #     #                 stock_move_id = self.env['stock.move'].search([('product_id', '=', row.product_id.id)])
+    #     #                 for stock_move in stock_move_id:
+    #     #                     for move_line in stock_move.active_move_line_ids:
+    #     #                         if product.lot_id.id == move_line.lot_produced_id.id:
+    #     #                             new_serial2 = self.env['stock.quant'].search( [('product_id', '=', row.product_id.id),('lot_id', '=', move_line.lot_id.id)])
+    #     #
+    #     #                             for seria_pro in new_serial2:
+    #     #                                     seria_pro.sudo().unlink()
+    #     #
+    #     #                                     row.state='assigned'
+    #     #             else:
+    #     #                 row.state='assigned'
+    #     #
+    #     #
+    #     #         product.state='confirmed'
+    #
+    #     moves = self.env['stock.move.line'].search([('reference', '=', self.name)])
+    #     moves.unlink()
+    #     self.state = 'confirmed'
 
     @api.multi
     def post_inventory(self):
