@@ -113,6 +113,14 @@ class add_checkbox(models.Model):
                 if line.chick_box==True:
                     item.check_box=True
 
+    @api.multi
+    def do_unreserve(self):
+        for row in self.move_raw_ids:
+             row.state = 'assigned'
+        for production in self:
+            production.move_raw_ids.filtered(lambda x: x.state not in ('done', 'cancel'))._do_unreserve()
+        return True
+
     # def do_un_produce(self):
     #     moves = self.env['stock.move.line'].search([('reference', '=', self.name)]).unlink()
     #
