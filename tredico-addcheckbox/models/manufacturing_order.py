@@ -39,12 +39,7 @@ class PRODUCTPRODUCT(models.Model):
             product.qty_available = res[product.id]['qty_available']
             product.incoming_qty = res[product.id]['incoming_qty']
             product.outgoing_qty = res[product.id]['outgoing_qty']
-<<<<<<< HEAD
-            product.virtual_available = product.qty_available + (product.incoming_qty - count)
-=======
             product.virtual_available = product.qty_available + (product.incoming_qty - count)-product.outgoing_qty
->>>>>>> tredco_development
-
 
 #region
 #     def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
