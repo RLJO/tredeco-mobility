@@ -22,6 +22,27 @@ class PRODUCTPRODUCT(models.Model):
             item.forecast_count +=count
 
 
+
+    @api.depends('stock_move_ids.product_qty', 'stock_move_ids.state')
+    def _compute_quantities(self):
+        print('hello count')
+        res = self._compute_quantities_dict(self._context.get('lot_id'), self._context.get('owner_id'),
+                                            self._context.get('package_id'), self._context.get('from_date'),
+                                            self._context.get('to_date'))
+        for product in self:
+            production_id = self.env['mrp.production'].search(
+                [('product_id', '=', product.id), ('state', '=', 'done')])
+            count = 0
+            for rec in production_id:
+                count += rec.product_qty
+
+            product.qty_available = res[product.id]['qty_available']
+            product.incoming_qty = res[product.id]['incoming_qty']
+            product.outgoing_qty = res[product.id]['outgoing_qty']
+            product.virtual_available = product.qty_available + (product.incoming_qty - count)
+
+
+#region
 #     def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
 #         for stock in self.stock_quant_ids:
 #             if stock.quant_check==False:

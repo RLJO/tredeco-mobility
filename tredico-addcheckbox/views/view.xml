@@ -57,19 +57,19 @@
             </record>
 
 
-        <record id="product_product_form_view_inherit" model="ir.ui.view">
-        <field name="name">product.product</field>
-        <field name="inherit_id" ref="mrp.product_product_form_view_bom_button"/>
-        <field name="model">product.product</field>
+<!--        <record id="product_product_form_view_inherit" model="ir.ui.view">-->
+<!--        <field name="name">product.product</field>-->
+<!--        <field name="inherit_id" ref="mrp.product_product_form_view_bom_button"/>-->
+<!--        <field name="model">product.product</field>-->
 
-        <field name="arch" type="xml">
-            <button name="143" position="after">
-                <button class="oe_stat_button" name="_get_forecast_value" type="object" icon="fa-book">
-                    <field string="manufacturing Forecasted" name="forecast_count" widget="statinfo"/>
-                </button>
-            </button>
-        </field>
-    </record>
+<!--        <field name="arch" type="xml">-->
+<!--            <button name="143" position="after">-->
+<!--                <button class="oe_stat_button" name="_get_forecast_value" type="object" icon="fa-book">-->
+<!--                    <field string="manufacturing Forecasted" name="forecast_count" widget="statinfo"/>-->
+<!--                </button>-->
+<!--            </button>-->
+<!--        </field>-->
+<!--    </record>-->
 
     </data>
 </odoo>
