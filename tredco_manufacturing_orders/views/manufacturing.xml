@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_mrp_inherit" model="ir.ui.view">
+        <field name="name">mrp.production</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+          <xpath expr="//button[@name='open_produce_product']" position="after">
+                <button name="do_un_produce" attrs="{'invisible': [ ('state', 'not in', ('progress'))]}" string="UNCONSUME" type="object"/>
+          </xpath>
+          <xpath expr="//header//button[@name='button_scrap']" position="after">
+                <button name="do_cancel" attrs="{'invisible': [ ('state', 'not in', ('done'))]}" string="Cancel" type="object"/>
+          </xpath>
+             <xpath expr="//header//button[@name='post_inventory']" position="replace">
+                    <button name="post_inventory" string="Post Inventory" type="object" attrs="{'invisible': [('post_visible', '=', False)]}" groups="base.group_no_one,mrp.group_mrp_manager,mrp.group_mrp_user"/>
+          </xpath>
+        </field>
+    </record>
+    <record id="view_mrp_inherit2" model="ir.ui.view">
+        <field name="name">mrp.production</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="quality_mrp.mrp_production_view_form_inherit_quality"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="show_quality_checks_and_alerts" invisible="1"/>
+            </field>
+            <xpath expr="//form//header//button[@name='check_quality']" position="replace">
+                <button name="check_quality" attrs="{'invisible': ['|',('quality_check_todo', '=', False),('show_quality_checks_and_alerts','=',False)]}" type="object" string="Quality Checks" class="oe_highlight"/>
+            </xpath>
+            <xpath expr="//form//header/button[@name='button_quality_alert'][1]" position="replace">
+                <button name="button_quality_alert" type="object" string="Quality Alert" context="{'default_production_id': active_id}" attrs="{'invisible': ['|','|',('check_ids', '=', []),('show_quality_checks_and_alerts', '=', False), '&amp;', ('quality_check_fail', '=', True), ('quality_alert_count', '=', 0)]}"/>
+            </xpath>
+            <xpath expr="//form/header/button[@name='button_quality_alert'][2]" position="replace">
+                <button name="button_quality_alert" type="object" string="Quality Alert" context="{'default_production_id': active_id}" class="oe_highlight" attrs="{'invisible': ['|','|', ('quality_check_fail', '=', False), ('quality_alert_count', '!=', 0),('show_quality_checks_and_alerts', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="manufacturing_form_inherit" model="ir.ui.view">
+                <field name="name">manufacturing.form.inherit</field>
+                <field name="model">mrp.production</field>
+                 <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+
+                <field name="arch" type="xml">
+                      <xpath expr="//field[@name='finished_move_line_ids']" position="replace">
+                        <field name="finished_move_line_ids" context="{'form_view_ref': 'mrp.view_finisehd_move_line'}">
+                                 <tree default_order="done_move" editable="top" create="0" delete="0" decoration-muted="state in ('done', 'cancel')">
+                                    <field name="product_id" readonly="1"/>
+                                    <field name="lot_id" groups="stock.group_production_lot" domain="[('product_id', '=', product_id)]" context="{'default_product_id': product_id}" attrs="{'invisible': [('lots_visible', '=', False)]}"/>
+                                    <field name="product_uom_id" groups="uom.group_uom"/>
+                                    <field name="qty_done"/>
+                                    <field name="lots_visible" invisible="1"/>
+                                    <field name="done_move" invisible="1"/>
+                                    <field name="state" invisible="1"/>
+                                </tree>
+                            </field>
+                    </xpath>
+                     <xpath expr="//field[@name='finished_move_line_ids']/tree/field[@name='qty_done']" position="before">
+                       <field name="chick_box"/>
+                     </xpath>
+                </field>
+            </record>
+</odoo>
