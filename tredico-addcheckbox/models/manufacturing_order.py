@@ -5,10 +5,207 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.tools.float_utils import float_round, float_compare, float_is_zero
 
 
+class PRODUCTPRODUCT(models.Model):
+    _inherit = 'product.product'
+    forecast_count = fields.Integer(compute='_get_forecast_value', readonly=1)
+
+    @api.multi
+    @api.depends('forecast_count')
+    def _get_forecast_value(self):
+        for item in self:
+            item.forecast_count = item.qty_available
+
+            production_id = self.env['mrp.production'].search([('product_id', '=', item.id),('state','in',('confirmed','progress'))])
+            count=0
+            for rec in production_id:
+                count += rec.product_qty
+            item.forecast_count +=count
+
+
+#     def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
+#         for stock in self.stock_quant_ids:
+#             if stock.quant_check==False:
+#                 domain_quant_loc, domain_move_in_loc, domain_move_out_loc = self._get_domain_locations()
+#                 domain_quant = [('product_id', 'in', self.ids)] + domain_quant_loc
+#                 dates_in_the_past = False
+#                 # only to_date as to_date will correspond to qty_available
+#                 to_date = fields.Datetime.to_datetime(to_date)
+#                 if to_date and to_date < fields.Datetime.now():
+#                     dates_in_the_past = True
+#
+#                 domain_move_in = [('product_id', 'in', self.ids)] + domain_move_in_loc
+#                 domain_move_out = [('product_id', 'in', self.ids)] + domain_move_out_loc
+#                 if lot_id is not None:
+#                     domain_quant += [('lot_id', '=', lot_id)]
+#                 if owner_id is not None:
+#                     domain_quant += [('owner_id', '=', owner_id)]
+#                     domain_move_in += [('restrict_partner_id', '=', owner_id)]
+#                     domain_move_out += [('restrict_partner_id', '=', owner_id)]
+#                 if package_id is not None:
+#                     domain_quant += [('package_id', '=', package_id)]
+#                 if dates_in_the_past:
+#                     domain_move_in_done = list(domain_move_in)
+#                     domain_move_out_done = list(domain_move_out)
+#                 if from_date:
+#                     domain_move_in += [('date', '>=', from_date)]
+#                     domain_move_out += [('date', '>=', from_date)]
+#                 if to_date:
+#                     domain_move_in += [('date', '<=', to_date)]
+#                     domain_move_out += [('date', '<=', to_date)]
+#
+#                 Move = self.env['stock.move']
+#                 Quant = self.env['stock.quant']
+#                 domain_move_in_todo = [('state', 'in',
+#                                         ('waiting', 'confirmed', 'assigned', 'partially_available'))] + domain_move_in
+#                 domain_move_out_todo = [('state', 'in',
+#                                          ('waiting', 'confirmed', 'assigned', 'partially_available'))] + domain_move_out
+#                 moves_in_res = dict((item['product_id'][0], item['product_qty']) for item in
+#                                     Move.read_group(domain_move_in_todo, ['product_id', 'product_qty'], ['product_id'],
+#                                                     orderby='id'))
+#                 moves_out_res = dict((item['product_id'][0], item['product_qty']) for item in
+#                                      Move.read_group(domain_move_out_todo, ['product_id', 'product_qty'], ['product_id'], orderby='id'))
+#                 quants_res = dict((item['product_id'][0], item['quantity']) for item in
+#                                   Quant.read_group(domain_quant, ['product_id', 'quantity'], ['product_id'], orderby='id'))
+#                 if dates_in_the_past:
+#                     # Calculate the moves that were done before now to calculate back in time (as most questions will be recent ones)
+#                     domain_move_in_done = [('state', '=', 'done'), ('date', '>', to_date)] + domain_move_in_done
+#                     domain_move_out_done = [('state', '=', 'done'), ('date', '>', to_date)] + domain_move_out_done
+#                     moves_in_res_past = dict((item['product_id'][0], item['product_qty']) for item in
+#                                              Move.read_group(domain_move_in_done, ['product_id', 'product_qty'], ['product_id'],
+#                                                              orderby='id'))
+#                     moves_out_res_past = dict((item['product_id'][0], item['product_qty']) for item in
+#                                               Move.read_group(domain_move_out_done, ['product_id', 'product_qty'],
+#                                                               ['product_id'], orderby='id'))
+#
+#                 res = dict()
+#                 for product in self.with_context(prefetch_fields=False):
+#                     product_id = product.id
+#                     rounding = product.uom_id.rounding
+#                     res[product_id] = {}
+#                     if dates_in_the_past:
+#                         qty_available = quants_res.get(product_id, 0.0) - moves_in_res_past.get(product_id,
+#                                                                                                 0.0) + moves_out_res_past.get(
+#                             product_id, 0.0)
+#                     else:
+#                         qty_available = quants_res.get(product_id, 0.0)
+#                     res[product_id]['qty_available'] = float_round(qty_available, precision_rounding=rounding)
+#                     res[product_id]['incoming_qty'] = float_round(moves_in_res.get(product_id, 0.0),
+#                                                                   precision_rounding=rounding)
+#                     res[product_id]['outgoing_qty'] = float_round(moves_out_res.get(product_id, 0.0),
+#                                                                   precision_rounding=rounding)
+#                     res[product_id]['virtual_available'] = float_round(
+#                         qty_available + res[product_id]['incoming_qty'] - res[product_id]['outgoing_qty'],
+#                         precision_rounding=rounding)
+#
+#                 return res
+#             else:
+#                 domain_quant_loc, domain_move_in_loc, domain_move_out_loc = self._get_domain_locations()
+#                 domain_quant = [('product_id', 'in', self.ids)] + domain_quant_loc
+#                 dates_in_the_past = False
+#                 # only to_date as to_date will correspond to qty_available
+#                 to_date = fields.Datetime.to_datetime(to_date)
+#                 if to_date and to_date < fields.Datetime.now():
+#                     dates_in_the_past = True
+#
+#                 domain_move_in = [('product_id', 'in', self.ids)] + domain_move_in_loc
+#                 domain_move_out = [('product_id', 'in', self.ids)] + domain_move_out_loc
+#                 if lot_id is not None:
+#                     domain_quant += [('lot_id', '=', lot_id)]
+#                 if owner_id is not None:
+#                     domain_quant += [('owner_id', '=', owner_id)]
+#                     domain_move_in += [('restrict_partner_id', '=', owner_id)]
+#                     domain_move_out += [('restrict_partner_id', '=', owner_id)]
+#                 if package_id is not None:
+#                     domain_quant += [('package_id', '=', package_id)]
+#                 if dates_in_the_past:
+#                     domain_move_in_done = list(domain_move_in)
+#                     domain_move_out_done = list(domain_move_out)
+#                 if from_date:
+#                     domain_move_in += [('date', '>=', from_date)]
+#                     domain_move_out += [('date', '>=', from_date)]
+#                 if to_date:
+#                     domain_move_in += [('date', '<=', to_date)]
+#                     domain_move_out += [('date', '<=', to_date)]
+#
+#                 Move = self.env['stock.move']
+#                 Quant = self.env['stock.quant']
+#                 domain_move_in_todo = [('state', 'in',
+#                                         ('waiting', 'confirmed', 'assigned', 'partially_available'))] + domain_move_in
+#                 domain_move_out_todo = [('state', 'in',
+#                                          ('waiting', 'confirmed', 'assigned', 'partially_available'))] + domain_move_out
+#                 # moves_in_res = dict((item['product_id'][0], item['product_qty']) for item in
+#                 #                     Move.read_group(domain_move_in_todo, ['product_id', 'product_qty'], ['product_id'],
+#                 #                                     orderby='id'))
+#                 moves_out_res = dict((item['product_id'][0], item['product_qty']) for item in
+#                                      Move.read_group(domain_move_out_todo, ['product_id', 'product_qty'],
+#                                                      ['product_id'], orderby='id'))
+#                 quants_res = dict((item['product_id'][0], item['quantity']) for item in
+#                                   Quant.read_group(domain_quant, ['product_id', 'quantity'], ['product_id'],
+#                                                    orderby='id'))
+#                 if dates_in_the_past:
+#                     # Calculate the moves that were done before now to calculate back in time (as most questions will be recent ones)
+#                     domain_move_in_done = [('state', '=', 'done'), ('date', '>', to_date)] + domain_move_in_done
+#                     domain_move_out_done = [('state', '=', 'done'), ('date', '>', to_date)] + domain_move_out_done
+#                     moves_in_res_past = dict((item['product_id'][0], item['product_qty']) for item in
+#                                              Move.read_group(domain_move_in_done, ['product_id', 'product_qty'],
+#                                                              ['product_id'],
+#                                                              orderby='id'))
+#                     moves_out_res_past = dict((item['product_id'][0], item['product_qty']) for item in
+#                                               Move.read_group(domain_move_out_done, ['product_id', 'product_qty'],
+#                                                               ['product_id'], orderby='id'))
+#
+#                 res = dict()
+#                 for product in self.with_context(prefetch_fields=False):
+#                     product_id = product.id
+#                     rounding = product.uom_id.rounding
+#                     res[product_id] = {}
+#                     if dates_in_the_past:
+#                         qty_available = quants_res.get(product_id, 0.0) -  moves_out_res_past.get(
+#                             product_id, 0.0)
+#                     else:
+#                         qty_available = quants_res.get(product_id, 0.0)
+#                     res[product_id]['qty_available'] = float_round(qty_available, precision_rounding=rounding)
+#                     # res[product_id]['incoming_qty'] = float_round(moves_in_res.get(product_id, 0.0),
+#                     #                                               precision_rounding=rounding)
+#                     res[product_id]['outgoing_qty'] = float_round(moves_out_res.get(product_id, 0.0),
+#                                                                   precision_rounding=rounding)
+#                     res[product_id]['virtual_available'] = float_round(
+#                         qty_available + res[product_id]['outgoing_qty'],
+#                         precision_rounding=rounding)
+#
+#                 return res
+#
+#     @api.depends('stock_move_ids.product_qty', 'stock_move_ids.state')
+#     def _compute_quantities(self):
+#         print('hell compute')
+#
+#         for stock in self.stock_quant_ids:
+#             if stock.quant_check==False:
+#                 res = self._compute_quantities_dict(self._context.get('lot_id'), self._context.get('owner_id'),self._context.get('package_id'), self._context.get('from_date'),self._context.get('to_date'))
+#                 print('quant ckeck',stock.quant_check)
+#                 for product in self:
+#                         product.qty_available = res[product.id]['qty_available']
+#                         product.incoming_qty = res[product.id]['incoming_qty']
+#                         product.outgoing_qty = res[product.id]['outgoing_qty']
+#                         product.virtual_available = res[product.id]['virtual_available']
+#             else:
+#                 print('not update')
+#                 res = self._compute_quantities_dict(self._context.get('lot_id'), self._context.get('owner_id'),
+#                                                     self._context.get('package_id'), self._context.get('from_date'),
+#                                                     self._context.get('to_date'))
+#                 print('quant ckeck', stock.quant_check)
+#                 for product in self:
+#                     product.qty_available = res[product.id]['qty_available']
+#
+#                     product.outgoing_qty = res[product.id]['outgoing_qty']
+#                     product.virtual_available = res[product.id]['virtual_available']
+#
+
+
 
 class StockQuant(models.Model):
     _inherit = 'stock.quant'
-    manufacturing_id=fields.Many2one('mrp.production')
+    quant_check=fields.Boolean('check Quant')
 
     @api.model
     def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None,
@@ -77,10 +274,11 @@ class StockQuant(models.Model):
                 # raise ValidationError(_('A serial number should only be linked to a single product.'))
 
 
-class addcheckbox(models.Model):
+class Stockmoveline(models.Model):
     _inherit = "stock.move.line"
 
     chick_box= fields.Boolean(string="update Stock" )
+
 
 class add_checkbox(models.Model):
     _inherit = "mrp.production"
@@ -153,24 +351,25 @@ class add_checkbox(models.Model):
                 products_finished = order.finished_move_line_ids.filtered(lambda x:x.chick_box == True)
                 if products_finished:
                     for item in products_finished:
+                        print( item.product_id.mrp_product_qty)
+                        item.product_id.product_variant_ids.sudo().write({
+                            'mrp_product_qty': item.qty_done
+                        })
 
                         if item.state !='done' and item.state != 'cancel':
                                 new_product=self.env['stock.quant'].sudo().create({
-                                            'manufacturing_id':self.id,
+                                            'quant_check':True,
                                             'product_id': item.product_id.id,
-                                            'product_qty': item.qty_done,
+                                            'product_qty': 0,
                                             'lot_id': item.lot_id.id,
                                             'location_id':12,
                                             'quantity':0,
 
                                         })
-
-
-
-
                                 new_product.sudo().write({
                                                     'quantity' :  item.qty_done,
                                                 })
+                                item.product_id.product_variant_ids.mrp_product_qty += item.qty_done
 
                                 item.state = 'done'
                                 for row in order.move_raw_ids:
@@ -181,7 +380,6 @@ class add_checkbox(models.Model):
                                                     if row.product_id.id== stock_move.product_id.id and item.lot_id.id == move_line.lot_produced_id.id:
 
                                                         new_fram = self.env['stock.quant'].sudo().create({
-                                                            'manufacturing_id': self.id,
                                                             'product_id': row.product_id.id,
                                                             'product_qty': 0,
                                                             'lot_id': move_line.lot_id.id,
@@ -189,13 +387,8 @@ class add_checkbox(models.Model):
                                                             'quantity': 0,
 
                                                         })
-
-
-
                                                         total_first = row.product_uom_qty / order.product_qty
-
                                                         total = total_first * item.qty_done
-
                                                         new_fram.sudo().write({
                                                                     'quantity': -1*total,
                                                                 })
@@ -240,3 +433,13 @@ class add_checkbox(models.Model):
 
 
         return True
+
+    @api.multi
+    def button_mark_done(self):
+        self.state='done'
+        self.ensure_one()
+        for wo in self.workorder_ids:
+            if wo.time_ids.filtered(lambda x: (not x.date_end) and (x.loss_type in ('productive', 'performance'))):
+                raise UserError(_('Work order %s is still running') % wo.name)
+        self._check_lots()
+
