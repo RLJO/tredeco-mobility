@@ -39,7 +39,11 @@ class PRODUCTPRODUCT(models.Model):
             product.qty_available = res[product.id]['qty_available']
             product.incoming_qty = res[product.id]['incoming_qty']
             product.outgoing_qty = res[product.id]['outgoing_qty']
+<<<<<<< HEAD
             product.virtual_available = product.qty_available + (product.incoming_qty - count)
+=======
+            product.virtual_available = product.qty_available + (product.incoming_qty - count)-product.outgoing_qty
+>>>>>>> tredco_development
 
 
 #region
@@ -372,7 +376,7 @@ class add_checkbox(models.Model):
                 products_finished = order.finished_move_line_ids.filtered(lambda x:x.chick_box == True)
                 if products_finished:
                     for item in products_finished:
-                        print( item.product_id.mrp_product_qty)
+
                         item.product_id.product_variant_ids.sudo().write({
                             'mrp_product_qty': item.qty_done
                         })
@@ -390,7 +394,6 @@ class add_checkbox(models.Model):
                                 new_product.sudo().write({
                                                     'quantity' :  item.qty_done,
                                                 })
-                                item.product_id.product_variant_ids.mrp_product_qty += item.qty_done
 
                                 item.state = 'done'
                                 for row in order.move_raw_ids:
